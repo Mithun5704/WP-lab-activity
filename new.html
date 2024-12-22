@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef2f3;
+            color: #333;
+        }
+        header {
+            background-color: #0077b6;
+            color: #fff;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        nav {
+            background-color: #023e8a;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            margin: 20px auto;
+            max-width: 900px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        section h2 {
+            color: #0077b6;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            margin: 5px 0;
+        }
+        footer {
+            background-color: #0077b6;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to My Portfolio</h1>
+    </header>
+    <nav>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#experience">Experience</a>
+        <a href="#education">Education</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <section id="about">
+        <img src="Mithun1.jpg" alt="Profile Picture" class="profile-image">
+        <h2>About Me</h2>
+        <p id="summary">Loading...</p>
+    </section>
+    <section id="skills">
+        <h2>Skills</h2>
+        <ul id="skills-list">Loading...</ul>
+    </section>
+    <section id="experience">
+        <h2>Experience</h2>
+        <div id="experience-container">Loading...</div>
+    </section>
+    <section id="education">
+        <h2>Education</h2>
+        <div id="education-container">Loading...</div>
+    </section>
+    <footer>
+        <p>&copy; 2024 My Portfolio. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Fetch data from the backend and display it
+        async function fetchPortfolioData() {
+            try {
+                const response = await fetch('http://localhost:3000/api/portfolio');
+                if (!response.ok) throw new Error('Failed to fetch portfolio data.');
+
+                const data = await response.json();
+                populatePortfolio(data);
+            } catch (error) {
+                console.error('Error:', error);
+                document.body.innerHTML += '<p>Error loading portfolio. Please try again later.</p>';
+            }
+        }
+
+        function populatePortfolio(data) {
+            document.getElementById('summary').textContent = data.summary;
+
+            const skillsList = document.getElementById('skills-list');
+            skillsList.innerHTML = data.skills.map(skill => `<li>${skill}</li>`).join('');
+
+            const experienceContainer = document.getElementById('experience-container');
+            experienceContainer.innerHTML = data.experience.map(exp => `
+                <div>
+                    <h3>${exp.role} at ${exp.organization} (${exp.period})</h3>
+                    <ul>${exp.details.map(detail => `<li>${detail}</li>`).join('')}</ul>
+                </div>
+            `).join('');
+
+            const educationContainer = document.getElementById('education-container');
+            educationContainer.innerHTML = data.education.map(edu => `
+                <div>
+                    <h3>${edu.institute}</h3>
+                    <p><strong>Graduation Date:</strong> ${edu.graduationDate}</p>
+                    <ul>${edu.details.map(detail => `<li>${detail}</li>`).join('')}</ul>
+                </div>
+            `).join('');
+        }
+
+        fetchPortfolioData();
+    </script>
+</body>
+</html>
